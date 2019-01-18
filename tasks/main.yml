@@ -1,0 +1,28 @@
+---
+
+- name: Ensure OpenSSL is installed
+  package:
+    name: openssl
+    state: present
+
+- name: Check if "{{ dhparam_file | dirname }}" exists
+  stat:
+    path: "{{ dhparam_file | dirname }}"
+  register: dhparam_dir
+
+- name: Create "{{ dhparam_file | dirname }}" directory
+  file:
+    path: "{{ dhparam_file | dirname }}"
+    state: directory
+
+- name: Check if "{{ dhparam_file }}" exists
+  stat:
+    path: "{{ dhparam_file }}"
+  register: dhparam
+  when: dhparam_dir.stat.exists
+
+- name: Create the diffie-hellman parameter
+  command: "openssl dhparam -out '{{ dhparam_file }}' {{ dhparam_size }}"
+  args:
+    creates: "{{ dhparam_file }}"
+  when: dhparam.stat.exists == False

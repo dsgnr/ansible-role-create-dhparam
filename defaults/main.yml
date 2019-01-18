@@ -1,0 +1,4 @@
+---
+
+dhparam_size: 2048
+dhparam_file: "/etc/ssl/certs/dhparam.pem"
